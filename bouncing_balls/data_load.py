@@ -1,4 +1,4 @@
-import h5py
+'''import h5py
 import torch
 import random
 import numpy as np
@@ -161,4 +161,60 @@ if __name__=='__main__':
 
 	out_ = test_dataset.__getitem__(10)
 
-	print(out_.shape)
+	print(out_.shape)'''
+
+import h5py
+import torch
+import random
+import numpy as np
+from torch.utils.data import Dataset
+import scipy.io as sio
+from PIL import Image
+import torchvision.transforms as transforms
+import glob
+import os
+
+class Loader(Dataset):
+    def __init__(self, image_dir, video_dir, sample_size, mask_path=None):
+        super(Loader, self).__init__()
+        self.image_dir = image_dir  # Path to sheared images
+        self.video_dir = video_dir  # Path to clear motion videos
+        self.sample_size = sample_size
+        
+        # Load all sheared images
+        self.image_list = sorted(glob.glob(os.path.join(image_dir, '*.png')))  
+        
+        # Load all corresponding video files (MAT format assumed)
+        self.video_list = sorted(glob.glob(os.path.join(video_dir, '*.mat')))  
+        
+        if mask_path:
+            self.mask = sio.loadmat(mask_path)
+            self.mask = self.mask[sorted(self.mask.keys())[-1]]
+        else:
+            self.mask = None
+
+    def __getitem__(self, index):
+        # Load sheared image
+        img_path = self.image_list[index % len(self.image_list)]
+        image = Image.open(img_path).convert('L')
+        image = transforms.ToTensor()(image).float()
+
+        # Load corresponding clear video (assumed to be .mat format with variable 'data')
+        vid_path = self.video_list[index % len(self.video_list)]
+        video_data = sio.loadmat(vid_path)
+        video = torch.from_numpy(video_data['data']).float()
+        
+        return image, video
+
+    def __len__(self):
+        return self.sample_size
+
+if __name__ == '__main__':
+    # Example paths (update as needed)
+    image_dir = './sheared_images/'  # Folder with sheared images
+    video_dir = './clear_videos/'  # Folder with clear motion videos
+    
+    test_dataset = Loader(image_dir, video_dir, sample_size=100, mask_path=None)
+    
+    inp_, out_ = test_dataset.__getitem__(10)
+    print(f"Sheared Image Shape: {inp_.shape}, Reconstructed Video Shape: {out_.shape}")
