@@ -186,14 +186,14 @@ class Loader(Dataset):
         
         # Load all corresponding video files (MAT format assumed)
         self.video_list = sorted(glob.glob(os.path.join(video_dir, '*.mat')))  
-        
+        print(f"Loaded {len(self.video_list)} videos from {video_dir}")
+
         if mask_path:
             self.mask = sio.loadmat(mask_path)
             self.mask = self.mask[sorted(self.mask.keys())[-1]]
         else:
             self.mask = None
-	print(f"Loaded {len(self.video_list)} videos from {video_dir}")
-
+	
 
     def __getitem__(self, index):
         # Load sheared image
