@@ -203,7 +203,7 @@ class Loader(Dataset):
 
         # Load corresponding clear video (assumed to be .mat format with variable 'data')
         vid_path = None #self.video_list[index % len(self.video_list)]
-        video_data = sio.loadmat(vid_path)
+        video_data = None
         video = torch.from_numpy(video_data['data']).float()
         
         return image, video
