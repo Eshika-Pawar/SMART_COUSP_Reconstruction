@@ -184,9 +184,13 @@ class Loader(Dataset):
         # Load all sheared images
         self.image_list = sorted(glob.glob(os.path.join(image_dir, '*.png')))  
         
-        # Load all corresponding video files (MAT format assumed)
+       ''' # Load all corresponding video files (MAT format assumed)
         self.video_list = sorted(glob.glob(os.path.join(video_dir, '*.mat')))  
-        print(f"Loaded {len(self.video_list)} videos from {video_dir}")
+        print(f"Loaded {len(self.video_list)} videos from {video_dir}")'''
+
+        self.video_list = []  # No need for video files anymore
+        print(f"✅ Using only sheared images from {image_dir}")
+
 
         if mask_path:
             self.mask = sio.loadmat(mask_path)
@@ -202,7 +206,7 @@ class Loader(Dataset):
         image = transforms.ToTensor()(image).float()
 
         # Load corresponding clear video (assumed to be .mat format with variable 'data')
-        vid_path = self.video_list[index % len(self.video_list)]
+        vid_path = None #self.video_list[index % len(self.video_list)]
         video_data = sio.loadmat(vid_path)
         video = torch.from_numpy(video_data['data']).float()
         
