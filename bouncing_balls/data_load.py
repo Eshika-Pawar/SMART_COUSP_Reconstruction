@@ -192,6 +192,8 @@ class Loader(Dataset):
             self.mask = self.mask[sorted(self.mask.keys())[-1]]
         else:
             self.mask = None
+	print(f"Loaded {len(self.video_list)} videos from {video_dir}")
+
 
     def __getitem__(self, index):
         # Load sheared image
