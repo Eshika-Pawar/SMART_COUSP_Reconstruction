@@ -81,8 +81,15 @@ model = models_zoo.model_gen(n_frames = 10, cuda_mode=args.cuda, input_noise=arg
 
 generator = Generator().eval()
 
-gen_state = torch.load(args.generator_path, map_location=lambda storage, loc: storage)
-generator.load_state_dict(gen_state['model_state'])
+'''gen_state = torch.load(args.generator_path, map_location=lambda storage, loc: storage)
+generator.load_state_dict(gen_state['model_state'])'''
+
+if args.generator_path is not None:
+    gen_state = torch.load(args.generator_path, map_location=lambda storage, loc: storage)
+    generator.load_state_dict(gen_state['model_state'])
+else:
+    print("⚠️ Warning: No generator checkpoint provided. Training will start from scratch.")
+
 
 if args.pretrained_path:
 	print('\nLoading pretrained model from: {}\n'.format(args.pretrained_path))
