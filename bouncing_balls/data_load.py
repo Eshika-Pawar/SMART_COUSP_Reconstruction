@@ -218,3 +218,34 @@ if __name__ == '__main__':
     
     inp_, out_ = test_dataset.__getitem__(10)
     print(f"Sheared Image Shape: {inp_.shape}, Reconstructed Video Shape: {out_.shape}")
+
+
+class Loader_offline(Dataset):
+    def __init__(self, input_file_name, output_file_name):
+        super(Loader_offline, self).__init__()
+        self.input_file_name = input_file_name
+        self.output_file_name = output_file_name
+        self.in_file = None
+        self.out_file = None
+
+        open_file = h5py.File(output_file_name, 'r')
+        self.len = open_file['data'].shape[0]
+        open_file.close()
+
+    def __getitem__(self, index):
+        if not self.in_file: 
+            self.in_file = h5py.File(self.input_file_name, 'r')
+        in_samples = self.in_file['data'][index]
+        in_samples = torch.from_numpy(in_samples).float().unsqueeze(0)
+        self.in_file.close()
+
+        if not self.out_file: 
+            self.out_file = h5py.File(self.output_file_name, 'r')
+        out_samples = np.moveaxis(self.out_file['data'][index], -1, 0)
+        out_samples = (torch.from_numpy(out_samples).float() - 0.5) / 0.5
+
+        return in_samples, out_samples
+
+    def __len__(self):
+        return self.len
+
