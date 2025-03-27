@@ -77,7 +77,7 @@ if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 # model = models_zoo.model_gen(n_frames=args.n_frames, cuda_mode=args.cuda, input_noise=args.add_noise)
-model = models_zoo.model_gen(cuda_mode=args.cuda, input_noise=args.add_noise)
+model = models_zoo.model_gen(n_frames = 10, cuda_mode=args.cuda, input_noise=args.add_noise)
 
 generator = Generator().eval()
 
