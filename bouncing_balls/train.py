@@ -44,8 +44,12 @@ args = parser.parse_args()
 args.cuda = True if not args.no_cuda and torch.cuda.is_available() else False
 
 if args.data_path:
-	train_data_set = Loader_offline(input_file_name=args.data_path+'input_valid.hdf', output_file_name=args.data_path+'output_valid.hdf')
-	valid_data_set = Loader_offline(input_file_name=args.data_path+'input_valid.hdf', output_file_name=args.data_path+'output_valid.hdf')
+	image_dir = "/content/sheared_images"  # Path to sheared images
+video_dir = "/content/droplet_burst.mat"  # Path to clear video (MAT format)
+
+train_data_set = Loader(image_dir=image_dir, video_dir=video_dir, sample_size=args.train_examples)
+valid_data_set = Loader(image_dir=image_dir, video_dir=video_dir, sample_size=args.val_examples)
+
 else:
 	train_data_set = Loader(im_size=args.im_size, n_balls=args.n_balls, n_frames=args.n_frames, rep_times=args.rep_times, sample_size=args.train_examples, mask_path=args.mask_path, aux_data=args.aux_train_data)
 	valid_data_set = Loader(im_size=args.im_size, n_balls=args.n_balls, n_frames=args.n_frames, rep_times=args.rep_times, sample_size=args.val_examples, mask_path=args.mask_path, aux_data=args.aux_val_data)
@@ -57,7 +61,9 @@ torch.manual_seed(args.seed)
 if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-model = models_zoo.model_gen(n_frames=args.n_frames, cuda_mode=args.cuda, input_noise=args.add_noise)
+# model = models_zoo.model_gen(n_frames=args.n_frames, cuda_mode=args.cuda, input_noise=args.add_noise)
+model = models_zoo.model_gen(cuda_mode=args.cuda, input_noise=args.add_noise)
+
 generator = Generator().eval()
 
 gen_state = torch.load(args.generator_path, map_location=lambda storage, loc: storage)
