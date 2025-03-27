@@ -54,13 +54,14 @@ else:
 	train_data_set = Loader(im_size=args.im_size, n_balls=args.n_balls, n_frames=args.n_frames, rep_times=args.rep_times, sample_size=args.train_examples, mask_path=args.mask_path, aux_data=args.aux_train_data)
 	valid_data_set = Loader(im_size=args.im_size, n_balls=args.n_balls, n_frames=args.n_frames, rep_times=args.rep_times, sample_size=args.val_examples, mask_path=args.mask_path, aux_data=args.aux_val_data)
 '''
-if args.data_path is not None:  # Explicitly check for None
+if args.data_path is not None:  # Ensure data_path is correctly checked
     image_dir = "/content/sheared_images"  # Path to sheared images
     video_dir = "/content/droplet_burst.mat"  # Path to clear video (MAT format)
 
     train_data_set = Loader(image_dir=image_dir, video_dir=video_dir, sample_size=args.train_examples)
     valid_data_set = Loader(image_dir=image_dir, video_dir=video_dir, sample_size=args.val_examples)
-else:
+    
+else:  # ELSE must follow an IF without indentation issues
     train_data_set = Loader(im_size=args.im_size, n_balls=args.n_balls, n_frames=args.n_frames, 
                             rep_times=args.rep_times, sample_size=args.train_examples, 
                             mask_path=args.mask_path, aux_data=args.aux_train_data)
@@ -68,6 +69,7 @@ else:
     valid_data_set = Loader(im_size=args.im_size, n_balls=args.n_balls, n_frames=args.n_frames, 
                             rep_times=args.rep_times, sample_size=args.val_examples, 
                             mask_path=args.mask_path, aux_data=args.aux_val_data)
+
 
 train_loader = DataLoader(train_data_set, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
 valid_loader = DataLoader(valid_data_set, batch_size=args.valid_batch_size, shuffle=False, num_workers=args.n_workers)
